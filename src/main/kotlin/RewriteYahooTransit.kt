@@ -97,7 +97,7 @@ fun stringToArray(
  */
 fun notTransitData(g: gui)
 {
-    g.textArea1.text = "Yahoo路線情報からsafari/chromeでコピーしたデータではありません。<br>" +
+    g.textArea1.text = "Yahoo路線情報からFirefoxでコピーしたデータではありません。<br>" +
             "ルートXを含めたところにマウスカーソルをおき、" +
             "到着までの範囲をコピーしてから変換ボタンを押してください。"
 }
@@ -242,19 +242,20 @@ fun convertButton(g: gui)
         // 21番線発 / 13番線着
         if (!st.hasMoreTokens()) break
         t = st.nextToken()
-        tt += " <font color=blue>$t</font>"
-        //10駅
-        // 指定席：6,520円
-        while (true)
+        if(t.contains("[発]"))
         {
-            if (!st.hasMoreTokens()) break
-            t = st.nextToken()
-            if (t.contains("現金") || t.contains("指定席") || t.contains("自由席") || t.contains("特急料金")
-                || t.contains("駅")  || t.contains("円"))
-            {
-                continue
+            tt += " <font color=blue>$t</font>"
+            //10駅
+            // 指定席：6,520円
+            while (true) {
+                if (!st.hasMoreTokens()) break
+                t = st.nextToken()
+                if (t.contains("現金") || t.contains("指定席") || t.contains("自由席") || t.contains("特急料金")
+                    || t.contains("駅") || t.contains("円")
+                ) {
+                    continue
+                } else break
             }
-            else break
         }
         if(t.contains("着"))
         {
@@ -274,7 +275,7 @@ fun convertButton(g: gui)
         {
             if (!st.hasMoreTokens()) break
             t = st.nextToken()
-            if (t.contains("[train]") || t.contains("[arr]") )
+            if (t.contains("[train]") || t.contains("[arr]") || t.contains("[walk]"))
                 break
         }
         if(t.contains("[arr]")) break
@@ -284,11 +285,13 @@ fun convertButton(g: gui)
     if (st.hasMoreTokens()) t = st.nextToken()
     tt += " $t<br>"
 
-    tt = "<!DOCTYPE html>\n" +
-            "<html>\n" +
-            "<head>\n" +
+    tt = "<!DOCTYPE html>" +
+            "<html>" +
+            "<head>" +
             "<meta charset=\"utf-8\"></head><body>" +
-    "<font size=2 face=\"&#65325;&#65331; &#12468;&#12471;&#12483;&#12463;\">$tt</font></body></html>"
+            "<font size=2 face=\"&#65325;&#65331; &#12468;&#12471;&#12483;&#12463;\">$tt</font>" +
+            "</body>" +
+            "</html>"
     g.textArea1.text = tt
 
     val doc = Jsoup.parse(tt)
